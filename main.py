@@ -5,8 +5,8 @@ import cv2
 
 from cvzone.PoseModule import PoseDetector
 
-#cap = cv2.VideoCapture("Resources/Videos/1.mp4")
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("Resources/Videos/1.mp4")
+#cap = cv2.VideoCapture(0)
 
 cap.set(3, 1280)  # Set the width of the frame
 cap.set(4, 720)  # Set the height of the frame
@@ -15,7 +15,8 @@ print('Height: ', cap.get(4))
 
 detector = PoseDetector()
 
-shirtsFolderPath = "Resources/Shirts"
+#shirtsFolderPath = "Resources/Shirts"
+shirtsFolderPath = "static/images"
 listShirts = os.listdir(shirtsFolderPath)
 fixedRatio = 292/190 # width of shirt / width of point 11 to 12
 shirtRatioHeightWidth = 546/440
@@ -53,14 +54,14 @@ while True:
 
         if lmList[16][1] < 300:
             counterRight += 1
-            cv2.ellipse(img, (70, 238), (38, 38), 0, 0, counterRight * selectionSpeed, (0, 255, 0), 7)
+            cv2.ellipse(img, (75, 236), (33, 33), 0, 0, counterRight * selectionSpeed, (0, 255, 0), 7)
             if counterRight * selectionSpeed > 360:
                 counterRight = 0
                 if imageNumber < len(listShirts)-1:
                     imageNumber += 1
         elif lmList[15][1] < 300:
             counterLeft += 1
-            cv2.ellipse(img, (590, 238), (38, 38), 0, 0, counterLeft * selectionSpeed, (0, 255, 0), 7)
+            cv2.ellipse(img, (566, 236), (33, 33), 0, 0, counterLeft * selectionSpeed, (0, 255, 0), 7)
             if counterLeft * selectionSpeed > 360:
                 counterLeft = 0
                 if imageNumber > 0:
