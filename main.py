@@ -5,13 +5,13 @@ import cv2
 
 from cvzone.PoseModule import PoseDetector
 
-cap = cv2.VideoCapture("Resources/Videos/1.mp4")
-#cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture("Resources/Videos/1.mp4")
+cap = cv2.VideoCapture(1)
 
-cap.set(3, 1280)  # Set the width of the frame
-cap.set(4, 720)  # Set the height of the frame
-print('Width:  ', cap.get(3))
-print('Height: ', cap.get(4))
+# cap.set(3, 1280)  # Set the width of the frame
+# cap.set(4, 720)  # Set the height of the frame
+# print('Width:  ', cap.get(3))
+# print('Height: ', cap.get(4))
 
 detector = PoseDetector()
 

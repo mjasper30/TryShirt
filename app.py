@@ -8,7 +8,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 def upload_form():
-    return render_template('index.html')
+    images = os.listdir(app.config['UPLOAD_FOLDER'])
+    return render_template('index.html', images=images)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
