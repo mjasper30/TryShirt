@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0; /* Remove default body margin */
+  padding: 0; /* Remove default body padding */
+}
+
+/* Add these styles to position the sidebar at the top-left */
+.sidebar {
+  top: 0;
+  left: 0;
+}
+
+/* Add these styles to make sure your content is not hidden behind the sidebar */
+main {
+  margin-left: 52px; /* Adjust this value based on your sidebar width */
+}
+
+/* Optionally, you can add transitions for smoother animations */
+.sidebar {
+  transition: left 0.3s ease;
+}
+
+main {
+  transition: margin-left 0.3s ease;
+}

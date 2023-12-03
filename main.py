@@ -6,7 +6,7 @@ from cvzone.PoseModule import PoseDetector
 
 cap = cv2.VideoCapture(0)
 detector = PoseDetector()
-shirtsFolderPath = "static/images"
+shirtsFolderPath = "backend/uploads"
 listShirts = os.listdir(shirtsFolderPath)
 fixedRatio = 292/190
 shirtRatioHeightWidth = 546/440
