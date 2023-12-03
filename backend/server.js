@@ -128,6 +128,36 @@ app.post("/api/addTshirt", upload.single("file_upload"), (req, res) => {
   });
 });
 
+// Update rfid
+app.put("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, username, email, role } = req.body;
+  const query =
+    "UPDATE users SET name = ?, username = ?, email = ?, role = ? WHERE id = ?";
+  db.query(query, [name, username, email, role, id], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.status(200).send("RFID updated successfully");
+    }
+  });
+});
+
+// Delete rfid
+app.delete("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const query = "DELETE FROM users WHERE id = ?";
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      console.error("Error executing query:", err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.status(200).send("User deleted successfully");
+    }
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
