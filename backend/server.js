@@ -24,6 +24,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+const tshirts = [];
 
 // Replace these with your MySQL database credentials
 const db = mysql.createConnection({
@@ -56,6 +57,51 @@ app.post("/login", (req, res) => {
     } else {
       res.status(401).json({ message: "Invalid credentials" });
     }
+  });
+});
+
+// Endpoint to get all T-Shirts
+app.get("/api/getTshirts", (req, res) => {
+  db.query("SELECT * FROM tshirts", (err, results) => {
+    if (err) {
+      console.error("Error fetching T-Shirts from MySQL:", err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint to get all getUsers
+app.get("/api/getUsers", (req, res) => {
+  db.query("SELECT * FROM users", (err, results) => {
+    if (err) {
+      console.error("Error fetching Users from MySQL:", err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Add new tshirt
+app.post("/api/addTshirt", upload.single("file_upload"), (req, res) => {
+  const { tshirt_name, brand_name, size, price } = req.body;
+
+  const file_upload = req.file.filename; // Get the filename from multer
+
+  const insertQuery = `INSERT INTO tshirts (tshirt_name, brand, file_upload, size, price ) VALUES (?, ?, ?, ?, ?)`;
+  const values = [tshirt_name, brand_name, file_upload, size, price];
+
+  db.query(insertQuery, values, (err, result) => {
+    if (err) {
+      console.error("Error inserting T-shirt data into database: ", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+
+    console.log("T-shirt data inserted successfully");
+    res.status(200).send("T-shirt added successfully");
   });
 });
 

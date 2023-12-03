@@ -10,11 +10,12 @@ import {
   Select,
   FileInput,
 } from "flowbite-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function TShirts() {
   const [openModal, setOpenModal] = useState(false);
+  const [tshirts, setTshirts] = useState([]);
 
   // Adding RFID data
   const onSubmit = async (e) => {
@@ -39,6 +40,22 @@ export default function TShirts() {
       console.error("Error:", error); // handle error
     }
   };
+
+  // Fetch T-Shirt data on component mount
+  useEffect(() => {
+    const fetchTshirts = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/getTshirts"
+        );
+        setTshirts(response.data); // assuming the API returns an array of T-Shirts
+      } catch (error) {
+        console.error("Error fetching T-Shirts:", error);
+      }
+    };
+
+    fetchTshirts();
+  }, []); // Empty dependency array means this effect runs once on mount
 
   return (
     <div className="h-full w-screen flex">
@@ -140,72 +157,60 @@ export default function TShirts() {
               <Table.HeadCell>Action</Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y">
-              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  1
-                </Table.Cell>
-                <Table.Cell>33a537c2</Table.Cell>
-                <Table.Cell>45</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-                <Table.Cell>
-                  <i>
-                    <span className="cursor-pointer material-symbols-rounded text-green-600 p-2">
-                      edit
-                    </span>
-                  </i>
-                  <i>
-                    <span className="cursor-pointer material-symbols-rounded text-red-600 p-2">
-                      delete
-                    </span>
-                  </i>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  2
-                </Table.Cell>
-                <Table.Cell>737832c2</Table.Cell>
-                <Table.Cell>23</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-                <Table.Cell>
-                  <i>
-                    <span className="cursor-pointer material-symbols-rounded text-green-600 p-2">
-                      edit
-                    </span>
-                  </i>
-                  <i>
-                    <span className="cursor-pointer material-symbols-rounded text-red-600 p-2">
-                      delete
-                    </span>
-                  </i>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  3
-                </Table.Cell>
-                <Table.Cell>e3153ec2</Table.Cell>
-                <Table.Cell>15</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-                <Table.Cell>Active</Table.Cell>
-                <Table.Cell>
-                  <i>
-                    <span className="cursor-pointer material-symbols-rounded text-green-600 p-2">
-                      edit
-                    </span>
-                  </i>
-                  <i>
-                    <span className="cursor-pointer material-symbols-rounded text-red-600 p-2">
-                      delete
-                    </span>
-                  </i>
-                </Table.Cell>
-              </Table.Row>
+              {tshirts.map((tshirt, index) => (
+                <Table.Row
+                  key={index}
+                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {index + 1}
+                  </Table.Cell>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {tshirt.tshirt_name}
+                  </Table.Cell>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {tshirt.brand}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {tshirt.file_upload && (
+                      <div className="flex justify-center items-center">
+                        <img
+                          src={`http://localhost:5000/uploads/${tshirt.file_upload}`}
+                          alt={tshirt.tshirt_name}
+                          style={{ width: "70px", height: "70px" }}
+                        />
+                      </div>
+                    )}
+                  </Table.Cell>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {tshirt.price}
+                  </Table.Cell>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {tshirt.size}
+                  </Table.Cell>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    <i>
+                      <span
+                        className="material-symbols-rounded cursor-pointer text-green-600 p-2"
+                        onClick={() => handleEditClick(rfid)}
+                      >
+                        edit
+                      </span>
+                    </i>
+                    <i>
+                      <span
+                        className="material-symbols-rounded cursor-pointer text-red-600 p-2"
+                        onClick={() => {
+                          setSelectedRfid(rfid);
+                          setOpenDeleteModal(true);
+                        }}
+                      >
+                        delete
+                      </span>
+                    </i>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table>
         </div>
