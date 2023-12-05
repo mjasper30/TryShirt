@@ -12,6 +12,34 @@ export default function Accounts() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  // Adding user data
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    const userData = {
+      name: e.currentTarget.name.value,
+      username: e.currentTarget.username.value,
+      email: e.currentTarget.email.value,
+      role: e.currentTarget["role"].value,
+      password: e.currentTarget.password.value,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/addUser",
+        userData
+      );
+
+      console.log(response.data); // handle success
+      setOpenModal(false); // Close the modal after successful submission
+
+      // Fetch the updated data after edit
+      fetchUsers();
+    } catch (error) {
+      console.error("Error:", error); // handle error
+    }
+  };
+
   // Function to handle edit button click
   const handleEditClick = (user) => {
     setSelectedUser(user);
@@ -29,6 +57,7 @@ export default function Accounts() {
         username: e.currentTarget.username.value,
         email: e.currentTarget.email.value,
         role: e.currentTarget["role"].value,
+        password: e.currentTarget.password.value,
       });
 
       // Close the edit modal
@@ -85,13 +114,10 @@ export default function Accounts() {
 
           {/* Add Modal */}
           <Modal show={openModal} onClose={() => setOpenModal(false)}>
-            <Modal.Header>Edit User</Modal.Header>
+            <Modal.Header>Add User</Modal.Header>
             <Modal.Body>
               <div className="space-y-6">
-                <form
-                  className="flex max-w flex-col gap-4"
-                  onSubmit={handleEditSubmit}
-                >
+                <form className="flex max-w flex-col gap-4" onSubmit={onSubmit}>
                   <div className="block">
                     <Label htmlFor="name" value="Name" />
                   </div>
@@ -100,6 +126,12 @@ export default function Accounts() {
                     type="text"
                     placeholder="Enter name"
                     required
+                    onChange={(e) =>
+                      setSelectedUser((selectedUser) => ({
+                        ...selectedUser,
+                        name: e.target.value,
+                      }))
+                    }
                   />
                   <div className="block">
                     <Label htmlFor="username" value="Username" />
@@ -109,15 +141,27 @@ export default function Accounts() {
                     type="text"
                     placeholder="Enter username"
                     required
+                    onChange={(e) =>
+                      setSelectedUser((selectedUser) => ({
+                        ...selectedUser,
+                        username: e.target.value,
+                      }))
+                    }
                   />
                   <div className="block">
                     <Label htmlFor="email" value="Email" />
                   </div>
                   <TextInput
                     id="email"
-                    type="text"
+                    type="email"
                     placeholder="Enter email"
                     required
+                    onChange={(e) =>
+                      setSelectedUser((selectedUser) => ({
+                        ...selectedUser,
+                        email: e.target.value,
+                      }))
+                    }
                   />
                   <div className="max-w">
                     <div className="mb-2 block">
@@ -135,13 +179,11 @@ export default function Accounts() {
                     id="password"
                     type="password"
                     placeholder="Enter password"
-                    required
-                    value={""}
                     onChange={(e) =>
-                      setSelectedUser({
+                      setSelectedUser((selectedUser) => ({
                         ...selectedUser,
                         password: e.target.value,
-                      })
+                      }))
                     }
                   />
                   <div className="block">
@@ -151,8 +193,6 @@ export default function Accounts() {
                     id="password_c"
                     type="password"
                     placeholder="Enter confirm password"
-                    required
-                    value={""}
                     onChange={(e) =>
                       setSelectedUser({
                         ...selectedUser,
@@ -160,7 +200,7 @@ export default function Accounts() {
                       })
                     }
                   />
-                  <Button type="submit">Update</Button>
+                  <Button type="submit">Add</Button>
                   <Button color="gray" onClick={() => setOpenEditModal(false)}>
                     Cancel
                   </Button>
@@ -215,7 +255,7 @@ export default function Accounts() {
                   </div>
                   <TextInput
                     id="email"
-                    type="text"
+                    type="email"
                     placeholder="Enter email"
                     required
                     value={selectedUser?.email || ""}
@@ -245,7 +285,7 @@ export default function Accounts() {
                       <option value="staff">Staff</option>
                     </Select>
                   </div>
-                  {/* <div className="block">
+                  <div className="block">
                     <Label htmlFor="password" value="Password" />
                   </div>
                   <TextInput
@@ -253,7 +293,6 @@ export default function Accounts() {
                     type="password"
                     placeholder="Enter password"
                     required
-                    value={""}
                     onChange={(e) =>
                       setSelectedUser({
                         ...selectedUser,
@@ -261,7 +300,7 @@ export default function Accounts() {
                       })
                     }
                   />
-                  <div className="block">
+                  {/* <div className="block">
                     <Label htmlFor="password_c" value="Confirm Password" />
                   </div>
                   <TextInput
@@ -269,7 +308,6 @@ export default function Accounts() {
                     type="password"
                     placeholder="Enter Confirm Password"
                     required
-                    value={""}
                     onChange={(e) =>
                       setSelectedUser({
                         ...selectedUser,

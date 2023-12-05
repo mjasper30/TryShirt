@@ -5,6 +5,7 @@ const cors = require("cors");
 const mysql = require("mysql");
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const port = 5000;
@@ -128,26 +129,114 @@ app.post("/api/addTshirt", upload.single("file_upload"), (req, res) => {
   });
 });
 
-// Update rfid
+// Update users
 app.put("/api/users/:id", (req, res) => {
   const { id } = req.params;
-  const { name, username, email, role } = req.body;
+  const { name, username, email, role, password } = req.body;
   const query =
-    "UPDATE users SET name = ?, username = ?, email = ?, role = ? WHERE id = ?";
-  db.query(query, [name, username, email, role, id], (err, result) => {
+    "UPDATE users SET name = ?, username = ?, email = ?, role = ?, password = ? WHERE id = ?";
+  db.query(
+    query,
+    [name, username, email, role, password, id],
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err);
+        res.status(500).send("Internal Server Error");
+      } else {
+        res.status(200).send("RFID updated successfully");
+      }
+    }
+  );
+});
+
+// Add new user
+app.post("/api/addUser", (req, res) => {
+  const { name, username, email, role, password } = req.body;
+
+  const insertQuery = `INSERT INTO users (name, username, email, role, password) VALUES (?, ?, ?, ?, ?)`;
+  const values = [name, username, email, role, password];
+
+  db.query(insertQuery, values, (err, result) => {
+    if (err) {
+      console.error("Error inserting user data into database: ", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+
+    console.log("User data inserted successfully");
+    res.status(200).send("User added successfully");
+  });
+});
+
+// Delete users
+app.delete("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const query = "DELETE FROM users WHERE id = ?";
+  db.query(query, [id], (err, result) => {
     if (err) {
       console.error("Error executing query:", err);
       res.status(500).send("Internal Server Error");
     } else {
-      res.status(200).send("RFID updated successfully");
+      res.status(200).send("User deleted successfully");
     }
   });
 });
 
-// Delete rfid
-app.delete("/api/users/:id", (req, res) => {
+// Update tshirt
+app.put("/api/tshirts/:id", upload.single("file_upload"), (req, res) => {
   const { id } = req.params;
-  const query = "DELETE FROM users WHERE id = ?";
+  const { tshirt_name, brand_name, size, price } = req.body;
+
+  let file_upload = req.file ? req.file.filename : null; // Get the filename from multer if a new file is uploaded
+
+  const getOldFileNameQuery = "SELECT file_upload FROM tshirts WHERE id = ?";
+  db.query(getOldFileNameQuery, [id], (err, result) => {
+    if (err) {
+      console.error("Error fetching old file name:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+
+    const oldFileName = result[0].file_upload;
+
+    const updateQuery =
+      "UPDATE tshirts SET tshirt_name = ?, brand = ?, file_upload = ?, size = ?, price = ? WHERE id = ?";
+    const values = [
+      tshirt_name,
+      brand_name,
+      file_upload || oldFileName,
+      size,
+      price,
+      id,
+    ];
+
+    db.query(updateQuery, values, (updateErr, updateResult) => {
+      if (updateErr) {
+        console.error("Error updating T-shirt data into database: ", updateErr);
+        res.status(500).send("Internal Server Error");
+        return;
+      }
+
+      // If a new file is uploaded, remove the old file
+      if (file_upload && oldFileName) {
+        const filePath = path.join(__dirname, "uploads", oldFileName);
+        fs.unlink(filePath, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error("Error deleting old file:", unlinkErr);
+          }
+        });
+      }
+
+      console.log("T-shirt data updated successfully");
+      res.status(200).send("T-Shirt updated successfully");
+    });
+  });
+});
+
+// Delete users
+app.delete("/api/tshirts/:id", (req, res) => {
+  const { id } = req.params;
+  const query = "DELETE FROM tshirts WHERE id = ?";
   db.query(query, [id], (err, result) => {
     if (err) {
       console.error("Error executing query:", err);
