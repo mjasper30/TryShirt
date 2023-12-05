@@ -27,6 +27,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 const tshirts = [];
 
+const bcrypt = require("bcrypt");
+const saltRounds = 10; // Adjust the number of salt rounds based on your security requirements
+
 // Replace these with your MySQL database credentials
 const db = mysql.createConnection({
   host: "localhost",
@@ -44,17 +47,29 @@ db.connect((err) => {
 });
 
 // API endpoint for login
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   // Replace with your actual SQL query
-  const sql = `SELECT * FROM users WHERE email = ? AND password = ?`;
+  const sql = `SELECT * FROM users WHERE email = ?`;
 
-  db.query(sql, [email, password], (err, results) => {
+  db.query(sql, [email], async (err, results) => {
     if (err) {
       res.status(500).json({ message: "Internal server error" });
     } else if (results.length > 0) {
-      res.json("Login successful");
+      const user = results[0];
+      try {
+        const match = await bcrypt.compare(password, user.password);
+
+        if (match) {
+          res.json("Login successful");
+        } else {
+          res.status(401).json({ message: "Invalid credentials" });
+        }
+      } catch (error) {
+        console.error("Error comparing passwords:", error);
+        res.status(500).json({ message: "Internal server error" });
+      }
     } else {
       res.status(401).json({ message: "Invalid credentials" });
     }
@@ -150,22 +165,29 @@ app.put("/api/users/:id", (req, res) => {
 });
 
 // Add new user
-app.post("/api/addUser", (req, res) => {
+app.post("/api/addUser", async (req, res) => {
   const { name, username, email, role, password } = req.body;
 
-  const insertQuery = `INSERT INTO users (name, username, email, role, password) VALUES (?, ?, ?, ?, ?)`;
-  const values = [name, username, email, role, password];
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  db.query(insertQuery, values, (err, result) => {
-    if (err) {
-      console.error("Error inserting user data into database: ", err);
-      res.status(500).send("Internal Server Error");
-      return;
-    }
+    const insertQuery = `INSERT INTO users (name, username, email, role, password) VALUES (?, ?, ?, ?, ?)`;
+    const values = [name, username, email, role, hashedPassword];
 
-    console.log("User data inserted successfully");
-    res.status(200).send("User added successfully");
-  });
+    db.query(insertQuery, values, (err, result) => {
+      if (err) {
+        console.error("Error inserting user data into database: ", err);
+        res.status(500).send("Internal Server Error");
+        return;
+      }
+
+      console.log("User data inserted successfully");
+      res.status(200).send("User added successfully");
+    });
+  } catch (error) {
+    console.error("Error hashing password: ", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 // Delete users
