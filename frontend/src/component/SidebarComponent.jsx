@@ -42,10 +42,10 @@ const SidebarComponent = () => {
       </div>
       <div className="flex items-center">
         <SidebarLink
-          to="/login"
+          to="/"
           text="logout"
-          isActive={activeLink === "/login"}
-          onClick={() => setActiveLink("/login")}
+          isActive={activeLink === "/"}
+          onClick={() => setActiveLink("/")}
         />
         <h3 className="font-semibold text-white ml-2 w-24">Logout</h3>
       </div>

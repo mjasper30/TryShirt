@@ -24,7 +24,7 @@ function Login() {
       .post("http://localhost:5000/login", values)
       .then((res) => {
         if (res.data === "Login successful") {
-          navigate("/dashboard");
+          navigate("/tshirts");
         } else {
           setErrors({
             ...errors,
