@@ -13,7 +13,7 @@ const SidebarComponent = () => {
 
   return (
     <div className="fixed sidebar bg-[#35363D] text-white h-full w-52 flex flex-col items-center z-50">
-      <div className="flex items-center mt-24">
+      {/* <div className="flex items-center mt-24">
         <SidebarLink
           to="/dashboard"
           text="dashboard"
@@ -21,8 +21,8 @@ const SidebarComponent = () => {
           onClick={() => setActiveLink("/dashboard")}
         />
         <h3 className="font-semibold text-white ml-2 w-24">Dashboard</h3>
-      </div>
-      <div className="flex items-center">
+      </div> */}
+      <div className="flex items-center mt-24">
         <SidebarLink
           to="/tshirts"
           text="laundry"
