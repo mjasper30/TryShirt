@@ -183,7 +183,11 @@ export default function TShirts() {
                     <div className="mb-2 block">
                       <Label htmlFor="file_upload" value="Upload file" />
                     </div>
-                    <FileInput id="file_upload" />
+                    <FileInput
+                      id="file_upload"
+                      helperText="Accepts only PNG image format"
+                      accept=".png"
+                    />
                   </div>
                   <Button type="submit">Add</Button>
                   <Button color="gray" onClick={() => setOpenModal(false)}>
@@ -269,7 +273,11 @@ export default function TShirts() {
                     <div className="mb-2 block">
                       <Label htmlFor="file_upload" value="Upload file" />
                     </div>
-                    <FileInput id="file_upload" />
+                    <FileInput
+                      id="file_upload"
+                      helperText="Accepts only PNG image format"
+                      accept=".png"
+                    />
                   </div>
                   <Button type="submit">Update</Button>
                   <Button color="gray" onClick={() => setOpenModal(false)}>

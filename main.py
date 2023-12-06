@@ -25,7 +25,7 @@ cv2.setWindowProperty("Image", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
 while True:
     success, img = cap.read()
-    img = detector.findPose(img, draw=True)
+    img = detector.findPose(img, draw=False)
     lmList, bboxInfo = detector.findPosition(img, bboxWithHands=False, draw=False)
     
     if lmList:
