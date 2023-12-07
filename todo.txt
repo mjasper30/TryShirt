@@ -1,5 +1,1 @@
-gawin yung front end ng dashboard ng admin
-crud for adding images
-landing page of website
-maconnect yung website sa python
-gawing desktop app
+
