@@ -37,10 +37,10 @@ while True:
         # Calculate the distance between the shoulders to estimate the width of the person
         person_width = int(math.dist(lm11, lm12))
         person_length = int(math.dist(lm11, lm23))
-        person_width_inch = 0;
-        person_length_inch = 0;
-        # person_width_inch = int(math.dist(lm11, lm12)) - 105
-        # person_length_inch = int(math.dist(lm11, lm23)) - 161
+        #person_width_inch = 0;
+        #person_length_inch = 0;
+        person_width_inch = int(math.dist(lm11, lm12)) - 105
+        person_length_inch = int(math.dist(lm11, lm23)) - 161
 
         print(int(math.dist(lm11, lm12)))
         print(int(math.dist(lm11, lm23)))
